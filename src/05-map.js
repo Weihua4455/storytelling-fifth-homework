@@ -57,7 +57,6 @@ function ready([usStates, powerplants]) {
   let powerplantTypes = powerplants.map(d => d.PrimSource)
 
   let types = d3.set(powerplantTypes).values()
-  colorScale.domain(d3.extent(types))
   yPositionScale.domain(types)
 
   svg

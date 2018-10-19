@@ -19,9 +19,9 @@ let projection = d3.geoAlbersUsa()
 
 let path = d3.geoPath().projection(projection)
 
-let opacityScale = d3.scaleLinear().range([0, 1])
+let colorScale = d3.scaleSequential(d3.interpolateBrBG)
 
-let colorScale = d3.scaleLinear().range(['red', 'blue'])
+let opacityScale = d3.scaleLinear().range([0, 1])
 
 d3.json(require('./data/counties_with_election_data.topojson'))
   .then(ready)
@@ -52,15 +52,10 @@ function ready(json) {
     .attr('d', path)
     .attr('stroke', 'white')
     .attr('fill', d => {
-      if (d.properties.clinton > d.properties.trump) {
-        return 'blue'
-      } else {
-        return 'red'
-      }
-    })
-    .style('opacity', d => {
-      var countyPop = d.properties.clinton + d.properties.trump
-      // console.log(opacityScale(countyPop))
-      return opacityScale(countyPop)
+      var percent =
+        d.properties.clinton / (d.properties.clinton + d.properties.trump)
+      console.log(percent)
+
+      return colorScale(percent)
     })
 }
