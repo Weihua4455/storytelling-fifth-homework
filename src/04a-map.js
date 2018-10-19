@@ -19,7 +19,9 @@ let projection = d3.geoAlbersUsa()
 
 let path = d3.geoPath().projection(projection)
 
-let opacityScale = d3.scaleLinear().range([0.025, 1])
+let opacityScale = d3.scaleLinear().range([0, 1])
+
+let colorScale = d3.scaleLinear().range(['red', 'blue'])
 
 d3.json(require('./data/counties_with_election_data.topojson'))
   .then(ready)
@@ -35,11 +37,12 @@ function ready(json) {
   //  opacityScale.domain([0, voter])
   // let voter = (d3.sum(clintonVoter) + d3.sum(trumpVoter)) / 100
   let pop = counties.features.map(
-    d => +d.properties.clinton + +d.properties.trump
+    d => d.properties.clinton + d.properties.trump
   )
 
-  opacityScale.domain(d3.extent(pop))
-
+  // console.log(pop)
+  opacityScale.domain([0, d3.max(pop)])
+  // console.log(counties.features)
   svg
     .selectAll('.country')
     .data(counties.features)
@@ -57,6 +60,7 @@ function ready(json) {
     })
     .style('opacity', d => {
       var countyPop = d.properties.clinton + d.properties.trump
+      // console.log(opacityScale(countyPop))
       return opacityScale(countyPop)
     })
 }
